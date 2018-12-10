@@ -2,6 +2,7 @@
 
 from pysmartapp.smartapp import SmartApp
 
+
 class TestSmartApp:
     """Tests for the SmartApp class."""
 
