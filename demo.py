@@ -17,7 +17,7 @@ def webhook():
     """Handle lifecycle requests."""
     content = request.get_json()
     response = SMARTAPP.process_request(content)
-    if response != {}:
+    if response is not None:
         return jsonify(response.to_dict())
     return "501 Not Implemented", 501
 

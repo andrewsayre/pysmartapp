@@ -1,7 +1,7 @@
 """Define a SmartApp."""
 
 from typing import Sequence, Optional
-from . import lifecycle
+from . import lifecycle, ping, configuration as config
 
 
 class SmartApp:
@@ -18,29 +18,27 @@ class SmartApp:
     def process_request(self, entity: dict) -> \
             Optional[lifecycle.LifecycleResponse]:
         """Get the response object for the request entity."""
-        lifecycle_event = entity.get("lifecycle", None)
+        lifecycle_event = entity["lifecycle"]
         if lifecycle_event == lifecycle.LIFECYCLE_PING:
-            return self.ping(lifecycle.PingRequest(entity))
+            return self.ping(ping.PingRequest(entity))
         if lifecycle_event == lifecycle.LIFECYCLE_CONFIG:
-            return self.configuration(lifecycle.ConfigurationRequest(entity))
+            return self.configuration(config.ConfigurationRequest(entity))
         return None
 
-    def ping(self, request: lifecycle.PingRequest) -> lifecycle.PingResponse:
+    def ping(self, request: ping.PingRequest) -> ping.PingResponse:
         """Process a ping lifecycle event."""
         # pylint: disable=no-self-use
-        return lifecycle.PingResponse(request.ping_challenge)
+        return ping.PingResponse(request.challenge)
 
-    def configuration(self, request: lifecycle.ConfigurationRequest) \
-            -> lifecycle.ConfigurationResponse:
+    def configuration(self, request: config.ConfigurationRequest) \
+            -> Optional[config.ConfigurationResponse]:
         """Process a configuration lifecycle event."""
-        if request.phase == lifecycle.CONFIG_INITIALIZE:
-            return lifecycle.ConfigurationInitializeResponse(
+        if request.phase == config.CONFIG_INITIALIZE:
+            return config.ConfigurationInitializeResponse(
                 self._name,
                 self._description,
                 self._permissions,
                 self._app_id)
-        if request.phase == lifecycle.CONFIG_PAGE:
-            pass
         return None
 
     @property
