@@ -1,0 +1,51 @@
+{
+  "lifecycle": "INSTALL",
+  "executionId": "b328f242-c602-4204-8d73-33c48ae180af",
+  "locale": "en",
+  "version": "1.0.0",
+  "installData": {
+    "authToken": "580aff1f-f0f1-44e0-94d4-e68bf9c2e768",
+    "refreshToken": "ad58374e-9d6a-4457-8488-a05aa8337ab3",
+    "installedApp": {
+      "installedAppId": "d692699d-e7a6-400d-a0b7-d5be96e7a564",
+      "locationId": "e675a3d9-2499-406c-86dc-8a492a886494",
+      "config": {
+        "contactSensor": [
+          {
+            "valueType": "DEVICE",
+            "deviceConfig": {
+              "deviceId": "e457978e-5e37-43e6-979d-18112e12c961",
+              "componentId": "main"
+            }
+          }
+        ],
+        "lightSwitch": [
+          {
+            "valueType": "DEVICE",
+            "deviceConfig": {
+              "deviceId": "74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+              "componentId": "main"
+            }
+          }
+        ],
+        "minutes": [
+          {
+            "valueType": "STRING",
+            "stringConfig": {
+              "value": "5"
+            }
+          }
+        ],
+        "permissions": [
+          "r:devices:e457978e-5e37-43e6-979d-18112e12c961",
+          "r:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+          "x:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76"
+        ]
+      }
+    }
+  },
+  "settings": {
+    "property1": "string",
+    "property2": "string"
+  }
+}

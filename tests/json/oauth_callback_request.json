@@ -1,0 +1,10 @@
+{
+  "lifecycle": "OAUTH_CALLBACK",
+  "executionId": "b328f242-c602-4204-8d73-33c48ae180af",
+  "locale": "en",
+  "version": "1.0.0",
+  "oAuthCallbackData": {
+    "installedAppId": "08153c4d-d0c1-4657-91ea-4f1ee535f030",
+    "urlPath": "string"
+  }
+}

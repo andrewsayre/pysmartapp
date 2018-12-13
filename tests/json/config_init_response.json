@@ -1,0 +1,13 @@
+{
+  "configurationData": {
+    "initialize": {
+      "name": "SmartApp",
+      "description": "SmartApp Description",
+      "id": "myapp",
+      "permissions": [
+        "l:devices"
+      ],
+      "firstPageId": "1"
+    }
+  }
+}

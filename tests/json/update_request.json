@@ -1,0 +1,84 @@
+{
+  "lifecycle": "UPDATE",
+  "executionId": "b328f242-c602-4204-8d73-33c48ae180af",
+  "locale": "en",
+  "version": "1.0.0",
+  "updateData": {
+    "authToken": "4ebd8d9f-53b0-483f-a989-4bde30ca83c0",
+    "refreshToken": "6e3bbf5f-b68d-4250-bbc9-f7151016a77f",
+    "installedApp": {
+      "installedAppId": "d692699d-e7a6-400d-a0b7-d5be96e7a564",
+      "locationId": "e675a3d9-2499-406c-86dc-8a492a886494",
+      "config": {
+        "contactSensor": [
+          {
+            "valueType": "DEVICE",
+            "deviceConfig": {
+              "deviceId": "e457978e-5e37-43e6-979d-18112e12c961",
+              "componentId": "main"
+            }
+          }
+        ],
+        "lightSwitch": [
+          {
+            "valueType": "DEVICE",
+            "deviceConfig": {
+              "deviceId": "74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+              "componentId": "main"
+            }
+          }
+        ],
+        "minutes": [
+          {
+            "valueType": "STRING",
+            "stringConfig": {
+              "value": "5"
+            }
+          }
+        ],
+        "permissions": [
+          "r:devices:e457978e-5e37-43e6-979d-18112e12c961",
+          "r:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+          "x:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76"
+        ]
+      }
+    },
+    "previousConfig": {
+      "contactSensor": [
+        {
+          "valueType": "DEVICE",
+          "deviceConfig": {
+            "deviceId": "e457978e-5e37-43e6-979d-18112e12c961",
+            "componentId": "main"
+          }
+        }
+      ],
+      "lightSwitch": [
+        {
+          "valueType": "DEVICE",
+          "deviceConfig": {
+            "deviceId": "74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+            "componentId": "main"
+          }
+        }
+      ],
+      "minutes": [
+        {
+          "valueType": "STRING",
+          "stringConfig": {
+            "value": "5"
+          }
+        }
+      ]
+    },
+    "previousPermissions": [
+      "r:devices:e457978e-5e37-43e6-979d-18112e12c961",
+      "r:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76",
+      "x:devices:74aac3bb-91f2-4a88-8c49-ae5e0a234d76"
+    ]
+  },
+  "settings": {
+    "property1": "string",
+    "property2": "string"
+  }
+}

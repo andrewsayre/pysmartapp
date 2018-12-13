@@ -1,0 +1,22 @@
+{
+  "lifecycle": "CONFIGURATION",
+  "executionId": "85f0047b-bb24-8eeb-da11-cb6e2f767322",
+  "locale": "en",
+  "version": "0.1.0",
+  "configurationData": {
+    "installedAppId": "8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121",
+    "phase": "PAGE",
+    "pageId": "1",
+    "previousPageId": "",
+    "config": {
+      "app": [
+        {
+
+        }
+      ]
+    }
+  },
+  "settings": {
+
+  }
+}
