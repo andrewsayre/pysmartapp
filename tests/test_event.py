@@ -1,7 +1,7 @@
 """"Tests for the event module."""
 
-from pysmartapp.event import EventRequest, Event
-from pysmartapp.consts import LIFECYCLE_EVENT, EVENT_TYPE_DEVICE
+from pysmartapp.consts import EVENT_TYPE_DEVICE, LIFECYCLE_EVENT
+from pysmartapp.event import Event, EventRequest
 
 from .utilities import get_fixture
 

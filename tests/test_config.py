@@ -25,7 +25,7 @@ class TestConfigRequest:
         assert req.locale == data['locale']
         assert req.version == data['version']
         assert req.installed_app_id == \
-               data['configurationData']['installedAppId']
+            data['configurationData']['installedAppId']
         assert req.phase == LIFECYCLE_CONFIG_INIT
         assert req.page_id == ''
         assert req.previous_page_id == ''

@@ -12,4 +12,3 @@ def test_create_request_invalid():
     # Act/Assert
     with pytest.raises(ValueError):
         utilities.create_request(data)
-

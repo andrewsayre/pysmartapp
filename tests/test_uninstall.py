@@ -1,7 +1,7 @@
 """"Tests for the uninstall module."""
 
-from pysmartapp.uninstall import UninstallRequest
 from pysmartapp.consts import LIFECYCLE_UNINSTALL
+from pysmartapp.uninstall import UninstallRequest
 
 from .utilities import get_fixture
 
@@ -24,5 +24,6 @@ class TestUninstallRequest:
         assert req.version == data['version']
         assert req.installed_app_id == 'd692699d-e7a6-400d-a0b7-d5be96e7a564'
         assert req.location_id == 'e675a3d9-2499-406c-86dc-8a492a886494'
-        assert req.installed_app_config == data['uninstallData']['installedApp']['config']
+        assert req.installed_app_config == \
+            data['uninstallData']['installedApp']['config']
         assert req.settings == data['settings']

@@ -1,8 +1,10 @@
 """Tests for the SmartApp file."""
 
 import pytest
-from pysmartapp.smartapp import SmartApp
+
 from pysmartapp.errors import SignatureVerificationError
+from pysmartapp.smartapp import SmartApp
+
 from .utilities import get_fixture
 
 

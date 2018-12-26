@@ -2,8 +2,10 @@
 
 import pytest
 
-from pysmartapp.request import Response, EmptyDataResponse, Request
+from pysmartapp.request import EmptyDataResponse, Request, Response
+
 from .utilities import get_fixture
+
 
 class TestResponse:
     """Tests for the Response class."""
