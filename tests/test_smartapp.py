@@ -1,8 +1,9 @@
 """Tests for the SmartApp file."""
 
+import pytest
 from pysmartapp.smartapp import SmartApp
-
-from .utilities import get_json
+from pysmartapp.errors import SignatureVerificationError
+from .utilities import get_fixture
 
 
 class TestSmartApp:
@@ -28,8 +29,8 @@ class TestSmartApp:
     def test_ping():
         """Tests the ping lifecycle event."""
         # Arrange
-        request = get_json("ping_request.json")
-        expected_response = get_json("ping_response.json")
+        request = get_fixture("ping_request")
+        expected_response = get_fixture("ping_response")
         app = SmartApp("Test Name", "Test Description", [])
         # Act
         response = app.handle_request(request)
@@ -40,7 +41,7 @@ class TestSmartApp:
     def test_on_ping():
         """Tests the ping event handler."""
         # Arrange
-        request = get_json("ping_request.json")
+        request = get_fixture("ping_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -58,8 +59,8 @@ class TestSmartApp:
     def test_config_init():
         """Tests the configuration initialization lifecycle event."""
         # Arrange
-        request = get_json("config_init_request.json")
-        expected_response = get_json("config_init_response.json")
+        request = get_fixture("config_init_request")
+        expected_response = get_fixture("config_init_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -71,8 +72,8 @@ class TestSmartApp:
     def test_config_page():
         """Tests the configuration initialization page event."""
         # Arrange
-        request = get_json("config_page_request.json")
-        expected_response = get_json("config_page_response.json")
+        request = get_fixture("config_page_request")
+        expected_response = get_fixture("config_page_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -84,7 +85,7 @@ class TestSmartApp:
     def test_on_config():
         """Tests the config event handler."""
         # Arrange
-        request = get_json("config_init_request.json")
+        request = get_fixture("config_init_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -102,8 +103,8 @@ class TestSmartApp:
     def test_install():
         """Tests the install lifecycle event."""
         # Arrange
-        request = get_json("install_request.json")
-        expected_response = get_json("install_response.json")
+        request = get_fixture("install_request")
+        expected_response = get_fixture("install_response")
         smartapp = SmartApp("SmartApp", "SmartApp Description",
                             ['l:devices'], "myapp")
         # Act
@@ -115,7 +116,7 @@ class TestSmartApp:
     def test_on_install():
         """Tests the install event handler."""
         # Arrange
-        request = get_json("install_request.json")
+        request = get_fixture("install_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -135,8 +136,8 @@ class TestSmartApp:
     def test_update():
         """Tests the update lifecycle event."""
         # Arrange
-        request = get_json("update_request.json")
-        expected_response = get_json("update_response.json")
+        request = get_fixture("update_request")
+        expected_response = get_fixture("update_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -148,7 +149,7 @@ class TestSmartApp:
     def test_on_update():
         """Tests the update event handler."""
         # Arrange
-        request = get_json("update_request.json")
+        request = get_fixture("update_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -168,8 +169,8 @@ class TestSmartApp:
     def test_event():
         """Tests the event lifecycle event."""
         # Arrange
-        request = get_json("event_request.json")
-        expected_response = get_json("event_response.json")
+        request = get_fixture("event_request")
+        expected_response = get_fixture("event_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -181,7 +182,7 @@ class TestSmartApp:
     def test_on_event():
         """Tests the event event handler."""
         # Arrange
-        request = get_json("event_request.json")
+        request = get_fixture("event_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -199,8 +200,8 @@ class TestSmartApp:
     def test_oauth_callback():
         """Tests the oauth_callback lifecycle event."""
         # Arrange
-        request = get_json("oauth_callback_request.json")
-        expected_response = get_json("oauth_callback_response.json")
+        request = get_fixture("oauth_callback_request")
+        expected_response = get_fixture("oauth_callback_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -212,7 +213,7 @@ class TestSmartApp:
     def test_on_oauth_callback():
         """Tests the oauth_callback event handler."""
         # Arrange
-        request = get_json("oauth_callback_request.json")
+        request = get_fixture("oauth_callback_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -230,8 +231,8 @@ class TestSmartApp:
     def test_uninstall():
         """Tests the uninstall lifecycle event."""
         # Arrange
-        request = get_json("uninstall_request.json")
-        expected_response = get_json("uninstall_response.json")
+        request = get_fixture("uninstall_request")
+        expected_response = get_fixture("uninstall_response")
         app = SmartApp("SmartApp", "SmartApp Description",
                        ['l:devices'], "myapp")
         # Act
@@ -243,7 +244,7 @@ class TestSmartApp:
     def test_on_uninstall():
         """Tests the uninstall event handler."""
         # Arrange
-        request = get_json("uninstall_request.json")
+        request = get_fixture("uninstall_request")
         smartapp = SmartApp("Test Name", "Test Description", [])
         fired = False
 
@@ -256,3 +257,40 @@ class TestSmartApp:
         smartapp.handle_request(request, None, False)
         # Assert
         assert fired
+
+    @staticmethod
+    def test_handle_request_sig_verification():
+        """Tests handle_request with sig verification."""
+        # Arrange
+        public_key = get_fixture('public_key', 'pem')
+        data = get_fixture('config_init_sig_pass_request')
+        smartapp = SmartApp("Test Name", "Test Description", [],
+                            public_key=public_key)
+        # Act
+        resp = smartapp.handle_request(data['body'], data['headers'], True)
+        # Assert
+        assert resp
+
+    @staticmethod
+    def test_handle_request_sig_verification_missing_headers():
+        """Tests handle_request with sig verification."""
+        # Arrange
+        public_key = get_fixture('public_key', 'pem')
+        data = get_fixture('config_init_sig_pass_request')
+        smartapp = SmartApp("Test Name", "Test Description", [],
+                            public_key=public_key)
+        # Act/Assert
+        with pytest.raises(SignatureVerificationError):
+            smartapp.handle_request(data['body'], [], True)
+
+    @staticmethod
+    def test_handle_request_sig_verification_fails():
+        """Tests handle_request with sig verification."""
+        # Arrange
+        public_key = get_fixture('public_key', 'pem')
+        data = get_fixture('config_init_sig_fail_request')
+        smartapp = SmartApp("Test Name", "Test Description", [],
+                            public_key=public_key)
+        # Act/Assert
+        with pytest.raises(SignatureVerificationError):
+            smartapp.handle_request(data['body'], data['headers'], True)

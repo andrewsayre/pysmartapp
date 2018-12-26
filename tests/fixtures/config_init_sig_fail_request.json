@@ -1,0 +1,29 @@
+{
+	"headers": {
+		"Authorization": "Signature keyId=\"/SmartThings/dd:41:39:60:b2:a3:32:0e:d4:79:39:a3:f1:ee:bd:ac\",signature=\"eOYM/ahp8CI8A8ia92ZA8DD/P6eE0E50QQjNxIQuvXMAaYvVd6TDrbP/CK5Ip5aZBkRruMrkzQPO9BJYybBLzzR+NmwyqfBGGOyLrNBDymACDj4z5qGKwkxsM5BdEaBZp5y6Rx8Mp8qj5mCVQuLcpjAjQu7lWatKpjspN8AbQctzkTRC95JqcJMYYbqSB8WT63aJ1Q+hnQxNl6J3R910ngFgzV85WWVL6rqEBWqc9vOIY0AyVz5mFQEla9SiYkhcziAQtdWb7zwfdDtRwEyuLd4DJak+rGWroR/HPq35cV7DIdydutvxbQMwVjCb0s/y1j8j4jf8+FdanK2YMGXfyg==\",headers=\"(request-target) digest date\",algorithm=\"rsa-sha256\"",
+		"Date": "Wed, 20 Dec 2018 16:06:40 UTC",
+		"Digest": "SHA-256=LGClKnf5iim5yeki/P/Z/vJvUCS21mr+ut59h8wW538="
+	},
+	"body": {
+		"lifecycle": "CONFIGURATION",
+		"executionId": "eb2465ce-36f9-9f54-3e58-42ba035d84f6",
+		"locale": "en",
+		"version": "0.1.0",
+		"client": {
+			"os": "ios",
+			"version": "0.0.0",
+			"language": "en-US"
+		},
+		"configurationData": {
+			"installedAppId": "90c2c15d-d75d-490d-ae36-2e7bbaae5834",
+			"phase": "INITIALIZE",
+			"pageId": "",
+			"previousPageId": "",
+			"config": {
+				"app": [{}
+				]
+			}
+		},
+		"settings": {}
+	}
+}

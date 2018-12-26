@@ -43,7 +43,7 @@ class PingResponse(Response):
 
     def to_data(self) -> dict:
         """Create a data structure for the response."""
-        return {'pingData': {'challenge': self._ping_challenge}}
+        return {'pingData': {'challenge': self.ping_challenge}}
 
     @property
     def ping_challenge(self):

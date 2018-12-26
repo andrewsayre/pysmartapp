@@ -46,6 +46,8 @@ class ConfigRequest(Request):
         resp.page_id = '1'
         resp.name = 'Configuration'
         resp.complete = True
+        resp.next_page_id = None
+        resp.previous_page_id = None
         return resp
 
     @property

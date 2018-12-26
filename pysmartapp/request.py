@@ -22,7 +22,7 @@ class EmptyDataResponse(Response):
 
     def to_data(self) -> dict:
         """Return a data structure representing this request."""
-        return {self._name: {}}
+        return {self.name: {}}
 
     @property
     def name(self) -> str:
@@ -58,10 +58,10 @@ class Request:
                 validate_signature: bool = True) -> Response:
         """Process the request with the SmartApp."""
         if validate_signature:
-            verifier = HeaderVerifier(
-                headers=headers, secret=app.public_key, method='POST',
-                path=app.path)
             try:
+                verifier = HeaderVerifier(
+                    headers=headers, secret=app.public_key, method='POST',
+                    path=app.path)
                 result = verifier.verify()
             except Exception:
                 raise SignatureVerificationError

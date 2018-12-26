@@ -46,7 +46,7 @@ class Event:
     @property
     def event_id(self) -> str:
         """Get the event id."""
-        return self._event_type
+        return self._event_id
 
     @property
     def location_id(self) -> str:
