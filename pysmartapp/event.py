@@ -2,7 +2,7 @@
 
 from typing import Sequence
 
-from .consts import EVENT_TYPE_DEVICE
+from .consts import EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER
 from .request import EmptyDataResponse, Request, Response
 
 
@@ -32,6 +32,17 @@ class Event:
             self._attribute = device_event['attribute']
             self._value = device_event['value']
             self._state_change = device_event['stateChange']
+        self._timer_name = None
+        self._timer_type = None
+        self._timer_time = None
+        self._timer_expression = None
+        if self._event_type == EVENT_TYPE_TIMER:
+            timer_event = data['timerEvent']
+            self._event_id = timer_event['eventId']
+            self._timer_name = timer_event['name']
+            self._timer_type = timer_event['type']
+            self._timer_time = timer_event['time']
+            self._timer_expression = timer_event['expression']
 
     @property
     def event_type(self) -> str:
@@ -82,6 +93,26 @@ class Event:
     def state_change(self) -> bool:
         """Get whether this is a new state change."""
         return self._state_change
+
+    @property
+    def timer_name(self) -> str:
+        """Get the name of the timer schedule."""
+        return self._timer_name
+
+    @property
+    def timer_type(self) -> str:
+        """Get the type of time."""
+        return self._timer_type
+
+    @property
+    def timer_time(self) -> str:
+        """Get the time the timer fired."""
+        return self._timer_time
+
+    @property
+    def timer_expression(self) -> str:
+        """Get the timer firing expression."""
+        return self._timer_expression
 
 
 class EventRequest(Request):
