@@ -2,10 +2,14 @@
 
 import pytest
 
-from pysmartapp.errors import SignatureVerificationError
-from pysmartapp.smartapp import SmartApp
+from pysmartapp.errors import (SignatureVerificationError,
+                               SmartAppNotRegisteredError)
+from pysmartapp.smartapp import SmartApp, SmartAppManager
 
 from .utilities import get_fixture
+
+INSTALLED_APP_ID = '8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121'
+APP_ID = 'f6c071aa-6ae7-463f-b0ad-8620ac23140f'
 
 
 class TestSmartApp:
@@ -18,14 +22,28 @@ class TestSmartApp:
         name = "Test Name"
         description = "Test Description"
         perms = ["Perm1"]
-        app_id = "MyApp"
+        config_app_id = "MyApp"
         # Act
-        app = SmartApp(name, description, perms, app_id)
+        app = SmartApp(name, description, perms, config_app_id)
         # Assert
         assert app.name == name
         assert app.description == description
         assert app.permissions == perms
-        assert app.app_id == app_id
+        assert app.config_app_id == config_app_id
+
+    @staticmethod
+    def test_setters():
+        """Tests the property setters."""
+        # Arrange
+        app = SmartApp(None, None, [])
+        # Act
+        app.app_id = "Test"
+        app.path = '/test'
+        app.public_key = 'key'
+        # Assert
+        assert app.app_id == "Test"
+        assert app.path == '/test'
+        assert app.public_key == 'key'
 
     @staticmethod
     def test_ping():
@@ -296,3 +314,283 @@ class TestSmartApp:
         # Act/Assert
         with pytest.raises(SignatureVerificationError):
             smartapp.handle_request(data['body'], data['headers'], True)
+
+
+class TestSmartAppManager:
+    """Tests for the SmartAppManager class."""
+
+    @staticmethod
+    def test_handle_request_ping_not_registered():
+        """Tests the ping lifecycle event with no registered apps."""
+        # Arrange
+        request = get_fixture("ping_request")
+        expected_response = get_fixture("ping_response")
+        fired = False
+        manager = SmartAppManager()
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == manager
+        manager.on_ping += handler
+
+        # Act
+        response = manager.handle_request(request)
+        # Assert
+        assert response == expected_response
+        assert fired
+
+    @staticmethod
+    def test_handle_request_not_registered():
+        """Tests processing a request when no SmartApp has been registered."""
+        # Arrange
+        request = get_fixture("config_init_request")
+        manager = SmartAppManager()
+        # Act
+        with pytest.raises(SmartAppNotRegisteredError) as e_info:
+            manager.handle_request(request, None, False)
+        # Assert
+        assert e_info.value.installed_app_id == INSTALLED_APP_ID
+
+    @staticmethod
+    def test_register():
+        """Test register"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        # Act
+        manager.register(smartapp)
+        # Assert
+        assert manager.smartapps[APP_ID] == smartapp
+
+    @staticmethod
+    def test_register_no_app_id():
+        """Test register with no SmartApp app id"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        # Act
+        with pytest.raises(ValueError) as e_info:
+            manager.register(smartapp)
+        # Assert
+        assert str(e_info.value) == 'smartapp must have an app_id.'
+
+    @staticmethod
+    def test_register_twice():
+        """Test register with the same app twice"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        # Act
+        with pytest.raises(ValueError) as e_info:
+            manager.register(smartapp)
+        # Assert
+        assert str(e_info.value) == 'smartapp already registered.'
+
+    @staticmethod
+    def test_unregister():
+        """Test unregister"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        # Act
+        manager.unregister(smartapp)
+        # Assert
+        assert APP_ID not in manager.smartapps
+
+    @staticmethod
+    def test_unregister_no_app_id():
+        """Test unregister with no SmartApp app id"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        # Act
+        with pytest.raises(ValueError) as e_info:
+            manager.unregister(smartapp)
+        # Assert
+        assert str(e_info.value) == 'smartapp must have an app_id.'
+
+    @staticmethod
+    def test_unregister_not_registered():
+        """Test register with the same app twice"""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        # Act
+        with pytest.raises(ValueError) as e_info:
+            manager.unregister(smartapp)
+        # Assert
+        assert str(e_info.value) == 'smartapp was not previously registered.'
+
+    @staticmethod
+    def test_map_installed_apps():
+        """Tests the map_installed_apps method."""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        # Act
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        # Assert
+        assert manager.installed_apps[INSTALLED_APP_ID] == smartapp
+
+    @staticmethod
+    def test_unmap_installed_apps():
+        """Tests the map_installed_apps method."""
+        # Arrange
+        manager = SmartAppManager()
+        smartapp = SmartApp(None, None, [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        # Act
+        manager.unmap_installed_apps(INSTALLED_APP_ID)
+        # Assert
+        assert INSTALLED_APP_ID not in manager.installed_apps
+
+    @staticmethod
+    def test_on_config():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("config_init_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_config += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
+    def test_on_install():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("install_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_install += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
+    def test_on_update():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("update_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_update += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
+    def test_on_event():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("event_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_event += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
+    def test_on_oauth_callback():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("oauth_callback_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_oauth_callback += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
+    def test_on_uninstall():
+        """Tests the config event handler at the manager level."""
+        # Arrange
+        request = get_fixture("uninstall_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        manager.map_installed_apps(
+            smartapp.app_id, INSTALLED_APP_ID)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_uninstall += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired

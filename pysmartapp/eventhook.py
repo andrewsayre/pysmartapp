@@ -10,12 +10,14 @@ class EventHook:
 
     def __iadd__(self, handler):
         """Add an event handler."""
-        self.__handlers.append(handler)
+        if handler not in self.__handlers:
+            self.__handlers.append(handler)
         return self
 
     def __isub__(self, handler):
         """Remove an event handler."""
-        self.__handlers.remove(handler)
+        if handler in self.__handlers:
+            self.__handlers.remove(handler)
         return self
 
     def fire(self, *args, **keywargs):

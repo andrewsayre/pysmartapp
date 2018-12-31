@@ -33,7 +33,7 @@ class ConfigRequest(Request):
         # This is a hard-coded primitive response.
         resp = ConfigInitResponse()
         resp.name = app.name
-        resp.app_id = app.app_id
+        resp.config_app_id = app.config_app_id
         resp.description = app.description
         resp.permissions.extend(app.permissions)
         resp.first_page_id = '1'
@@ -78,7 +78,7 @@ class ConfigInitResponse(Response):
         """Create a new instance of the ConfigInitResponse."""
         self._name = None
         self._description = None
-        self._app_id = None
+        self._config_app_id = None
         self._permissions = []
         self._first_page_id = "1"
 
@@ -89,7 +89,7 @@ class ConfigInitResponse(Response):
                 "initialize": {
                     "name": self.name,
                     "description": self.description,
-                    "id": self.app_id,
+                    "id": self.config_app_id,
                     "permissions": self.permissions,
                     "firstPageId": self.first_page_id
                 }
@@ -117,14 +117,14 @@ class ConfigInitResponse(Response):
         self._description = value
 
     @property
-    def app_id(self) -> str:
-        """Get the id of the smartapp."""
-        return self._app_id
+    def config_app_id(self) -> str:
+        """Get the id of the smartapp to use in config."""
+        return self._config_app_id
 
-    @app_id.setter
-    def app_id(self, value: str):
-        """Set the id of the smartapp."""
-        self._app_id = value
+    @config_app_id.setter
+    def config_app_id(self, value: str):
+        """Set the id of the smartapp to use in config."""
+        self._config_app_id = value
 
     @property
     def permissions(self) -> List[str]:

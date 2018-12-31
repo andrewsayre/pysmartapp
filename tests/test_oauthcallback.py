@@ -22,5 +22,5 @@ class TestOAuthCallbackRequest:
         assert req.execution_id == data['executionId']
         assert req.locale == data['locale']
         assert req.version == data['version']
-        assert req.installed_app_id == '08153c4d-d0c1-4657-91ea-4f1ee535f030'
+        assert req.installed_app_id == '8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121'
         assert req.url_path == 'string'

@@ -22,7 +22,7 @@ class TestInstallRequest:
         assert req.execution_id == data['executionId']
         assert req.locale == data['locale']
         assert req.version == data['version']
-        assert req.installed_app_id == 'd692699d-e7a6-400d-a0b7-d5be96e7a564'
+        assert req.installed_app_id == '8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121'
         assert req.location_id == 'e675a3d9-2499-406c-86dc-8a492a886494'
         assert req.installed_app_config ==\
             data['installData']['installedApp']['config']
