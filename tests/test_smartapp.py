@@ -353,6 +353,27 @@ class TestSmartAppManager:
         assert e_info.value.installed_app_id == INSTALLED_APP_ID
 
     @staticmethod
+    def test_handle_request_fallback():
+        """Tests processing a request when no SmartApp has been registered."""
+        # Arrange
+        request = get_fixture("config_init_request")
+        manager = SmartAppManager()
+        smartapp = SmartApp("Test Name", "Test Description", [])
+        smartapp.app_id = APP_ID
+        manager.register(smartapp)
+        fired = False
+
+        def handler(req, resp, app):
+            nonlocal fired
+            fired = True
+            assert app == smartapp
+        manager.on_config += handler
+        # Act
+        manager.handle_request(request, None, False)
+        # Assert
+        assert fired
+
+    @staticmethod
     def test_register():
         """Test register"""
         # Arrange

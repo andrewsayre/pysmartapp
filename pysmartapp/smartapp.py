@@ -3,7 +3,7 @@
 import logging
 from typing import Dict, Sequence
 
-from .consts import LIFECYCLE_PING
+from .consts import LIFECYCLE_PING, SETTINGS_APP_ID
 from .errors import SmartAppNotRegisteredError
 from .eventhook import EventHook
 from .utilities import create_request
@@ -124,6 +124,9 @@ class SmartAppManager:
             resp = req.process(self, headers, validate_signature)
         else:
             smartapp = self._installed_apps.get(req.installed_app_id)
+            if not smartapp and SETTINGS_APP_ID in req.settings:
+                # try finding using fallback...
+                smartapp = self._smartapps.get(req.settings[SETTINGS_APP_ID])
             if not smartapp:
                 raise SmartAppNotRegisteredError(req.installed_app_id)
             resp = req.process(smartapp, headers, validate_signature)
