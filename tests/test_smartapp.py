@@ -1,5 +1,6 @@
 """Tests for the SmartApp file."""
 
+import asyncio
 import pytest
 
 from pysmartapp.dispatch import Dispatcher
@@ -60,6 +61,7 @@ class TestSmartApp:
         smartapp.connect_ping(handler)
         # Act
         response = await smartapp.handle_request(request)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -75,6 +77,7 @@ class TestSmartApp:
         smartapp.connect_config(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -90,6 +93,7 @@ class TestSmartApp:
         smartapp.connect_config(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -105,6 +109,7 @@ class TestSmartApp:
         smartapp.connect_install(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -120,6 +125,7 @@ class TestSmartApp:
         smartapp.connect_update(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -135,6 +141,7 @@ class TestSmartApp:
         smartapp.connect_event(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -150,6 +157,7 @@ class TestSmartApp:
         smartapp.connect_oauth_callback(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -165,6 +173,7 @@ class TestSmartApp:
         smartapp.connect_uninstall(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -222,6 +231,7 @@ class TestSmartAppManager:
         manager.connect_ping(handler)
         # Act
         response = await manager.handle_request(request)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -322,6 +332,7 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
 
@@ -336,6 +347,7 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
 
@@ -350,6 +362,7 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
 
@@ -364,6 +377,7 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
 
@@ -378,6 +392,7 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
 
@@ -392,5 +407,6 @@ class TestSmartAppManager:
         manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
+        await asyncio.sleep(0)
         # Assert
         assert handler.fired
