@@ -1,5 +1,4 @@
 """Testing utilities."""
-
 import json
 
 
@@ -14,7 +13,7 @@ def get_fixture(file: str, ext: str = 'json'):
 
 def get_dispatch_handler(smartapp):
     """Get a handler to mock in the dispatcher."""
-    def handler(req, resp, app):
+    async def handler(req, resp, app):
         handler.fired = True
         assert app == smartapp
     handler.fired = False

@@ -54,9 +54,7 @@ class TestDispatcher:
         dispatcher = Dispatcher()
         dispatcher.connect('TEST', async_handler)
         # Act
-        dispatcher.send('TEST')
-        # required so the execution switches to the handler
-        await asyncio.sleep(0)
+        await asyncio.gather(*dispatcher.send('TEST'))
         # Assert
         assert async_handler.fired
 
@@ -69,7 +67,7 @@ class TestDispatcher:
         dispatcher.connect('TEST', handler)
         args = object()
         # Act
-        dispatcher.send('TEST', args)
+        await asyncio.gather(*dispatcher.send('TEST', args))
         # Assert
         assert handler.fired
         assert handler.args[0] == args

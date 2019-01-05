@@ -2,12 +2,12 @@
 
 import asyncio
 from collections import defaultdict
-from typing import Any, Callable, Dict, List
+from typing import Any, Callable, Dict, List, Sequence
 
 TargetType = Callable[..., Any]
 DisconnectType = Callable[[], None]
 ConnectType = Callable[[str, TargetType], DisconnectType]
-SendType = Callable[..., None]
+SendType = Callable[..., Sequence[asyncio.Future]]
 
 
 class Dispatcher:
@@ -21,15 +21,18 @@ class Dispatcher:
         self._loop = loop or asyncio.get_event_loop()
         self._connect = connect or self._default_connect
         self._send = send or self._default_send
+        self._last_sent = []
 
     def connect(self, signal: str, target: TargetType) \
             -> DisconnectType:
         """Connect function to signal.  Must be ran in the event loop."""
         return self._connect(self._signal_prefix + signal, target)
 
-    def send(self, signal: str, *args: Any) -> None:
+    def send(self, signal: str, *args: Any) -> Sequence[asyncio.Future]:
         """Fire a signal.  Must be ran in the event loop."""
-        self._send(self._signal_prefix + signal, *args)
+        sent = self._last_sent = self._send(
+            self._signal_prefix + signal, *args)
+        return sent
 
     def _default_connect(self, signal: str, target: TargetType) \
             -> DisconnectType:
@@ -45,19 +48,27 @@ class Dispatcher:
                 pass
         return remove_dispatcher
 
-    def _default_send(self, signal: str, *args: Any) -> None:
+    def _default_send(self, signal: str, *args: Any) -> \
+            Sequence[asyncio.Future]:
         """Fire a signal.  Must be ran in the event loop."""
         targets = self._signals[signal]
+        futures = []
         for target in targets:
-            self._call_target(target, *args)
+            task = self._call_target(target, *args)
+            futures.append(task)
+        return futures
 
-    def _call_target(self, target, *args):
+    def _call_target(self, target, *args) -> asyncio.Future:
         if asyncio.iscoroutinefunction(target):
-            self._loop.create_task(target(*args))
-        else:
-            self._loop.run_in_executor(None, target, *args)
+            return self._loop.create_task(target(*args))
+        return self._loop.run_in_executor(None, target, *args)
 
     @property
     def signals(self) -> Dict[str, List[TargetType]]:
         """Get the dictionary of registered signals and callbaks."""
         return self._signals
+
+    @property
+    def last_sent(self) -> Sequence[asyncio.Future]:
+        """Get the last sent asyncio tasks."""
+        return self._last_sent

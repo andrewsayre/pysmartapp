@@ -1,6 +1,7 @@
 """Tests for the SmartApp file."""
 
 import asyncio
+
 import pytest
 
 from pysmartapp.dispatch import Dispatcher
@@ -61,7 +62,8 @@ class TestSmartApp:
         smartapp.connect_ping(handler)
         # Act
         response = await smartapp.handle_request(request)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -77,7 +79,8 @@ class TestSmartApp:
         smartapp.connect_config(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -93,7 +96,8 @@ class TestSmartApp:
         smartapp.connect_config(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -109,7 +113,8 @@ class TestSmartApp:
         smartapp.connect_install(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -125,7 +130,8 @@ class TestSmartApp:
         smartapp.connect_update(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -141,7 +147,8 @@ class TestSmartApp:
         smartapp.connect_event(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -157,7 +164,8 @@ class TestSmartApp:
         smartapp.connect_oauth_callback(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -173,7 +181,8 @@ class TestSmartApp:
         smartapp.connect_uninstall(handler)
         # Act
         response = await smartapp.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*smartapp.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -231,7 +240,8 @@ class TestSmartAppManager:
         manager.connect_ping(handler)
         # Act
         response = await manager.handle_request(request)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
         assert response == expected_response
@@ -327,12 +337,13 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("config_init_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_config(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
 
@@ -342,12 +353,13 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("install_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_install(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
 
@@ -357,12 +369,13 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("update_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_update(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
 
@@ -372,12 +385,13 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("event_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_event(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
 
@@ -387,12 +401,13 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("oauth_callback_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_oauth_callback(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
 
@@ -402,11 +417,12 @@ class TestSmartAppManager:
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("uninstall_request")
-        handler = get_dispatch_handler(manager)
+        app = manager.register(APP_ID, 'none')
+        handler = get_dispatch_handler(app)
         manager.connect_uninstall(handler)
-        manager.register(APP_ID, 'none')
         # Act
         await manager.handle_request(request, None, False)
-        await asyncio.sleep(0)
+        # ensure dispatched tasks complete
+        await asyncio.gather(*manager.dispatcher.last_sent)
         # Assert
         assert handler.fired
