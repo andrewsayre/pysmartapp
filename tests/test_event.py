@@ -1,6 +1,6 @@
 """"Tests for the event module."""
 
-from pysmartapp.consts import (
+from pysmartapp.const import (
     EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER, LIFECYCLE_EVENT)
 from pysmartapp.event import Event, EventRequest
 

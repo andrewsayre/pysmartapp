@@ -1,6 +1,6 @@
 """"Tests for the uninstall module."""
 
-from pysmartapp.consts import LIFECYCLE_UNINSTALL
+from pysmartapp.const import LIFECYCLE_UNINSTALL
 from pysmartapp.uninstall import UninstallRequest
 
 from .utilities import get_fixture

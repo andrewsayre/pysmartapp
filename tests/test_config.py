@@ -3,7 +3,7 @@
 import pytest
 
 from pysmartapp.config import ConfigRequest
-from pysmartapp.consts import LIFECYCLE_CONFIG, LIFECYCLE_CONFIG_INIT
+from pysmartapp.const import LIFECYCLE_CONFIG, LIFECYCLE_CONFIG_INIT
 
 from .utilities import get_fixture
 
@@ -31,7 +31,8 @@ class TestConfigRequest:
         assert req.previous_page_id == ''
 
     @staticmethod
-    def test_process_invalid():
+    @pytest.mark.asyncio
+    async def test_process_invalid():
         """Tests the process method for an invalid phase"""
         # Arrange
         data = get_fixture('config_init_request')
@@ -40,4 +41,4 @@ class TestConfigRequest:
         req = ConfigRequest(data)
         # Assert
         with pytest.raises(ValueError):
-            req.process(None, validate_signature=False)
+            await req.process(None, validate_signature=False)

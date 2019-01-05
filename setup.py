@@ -9,7 +9,7 @@ with open(os.path.join("README.md"), 'r') as fh:
     long_description = fh.read()
 
 consts = {}
-with open(os.path.join('pysmartapp', 'consts.py'), 'r') as fp:
+with open(os.path.join('pysmartapp', 'const.py'), 'r') as fp:
     exec(fp.read(), consts)
 
 setup(name=consts['__title__'],
@@ -22,8 +22,8 @@ setup(name=consts['__title__'],
       author_email='andrew@sayre.net',
       license='MIT',
       packages=find_packages(),
-      install_requires=['httpsig>=1.3.0'],
-      tests_require=['tox>=3.5.0'],
+      install_requires=['httpsig>=1.3.0,<2.0.0'],
+      tests_require=['tox>=3.5.0,<4.0.0'],
       platforms=['any'],
       keywords=["smartthings", "smartapp"],
       zip_safe=False,

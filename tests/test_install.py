@@ -1,6 +1,6 @@
 """"Tests for the install module."""
 
-from pysmartapp.consts import LIFECYCLE_INSTALL
+from pysmartapp.const import LIFECYCLE_INSTALL
 from pysmartapp.install import InstallRequest
 
 from .utilities import get_fixture

@@ -1,7 +1,7 @@
 """Define the utilities class."""
 
 from .config import ConfigRequest
-from .consts import (
+from .const import (
     LIFECYCLE_CONFIG, LIFECYCLE_EVENT, LIFECYCLE_INSTALL,
     LIFECYCLE_OAUTH_CALLBACK, LIFECYCLE_PING, LIFECYCLE_UNINSTALL,
     LIFECYCLE_UPDATE)

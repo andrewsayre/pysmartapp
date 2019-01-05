@@ -9,18 +9,12 @@ class PingRequest(Request):
     def __init__(self, data: dict):
         """Create a new instance of the PingRequest class."""
         super().__init__(data)
+        self._supports_validation = False
         self._ping_data_raw = data['pingData']
 
-    def process(self, app, headers: dict = None,
-                validate_signature: bool = True):
-        """Process the request with the SmartApp."""
-        # Overridden to bypass validation.
-        return self._process(app)
-
-    def _process(self, app):
+    async def _process(self, app):
         response = PingResponse()
         response.ping_challenge = self.ping_challenge
-        app.on_ping.fire(self, response, app=app)
         return response
 
     @property

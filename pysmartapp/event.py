@@ -2,7 +2,7 @@
 
 from typing import Sequence
 
-from .consts import EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER
+from .const import EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER
 from .request import EmptyDataResponse, Request, Response
 
 
@@ -126,9 +126,8 @@ class EventRequest(Request):
         self._init_installed_app(event_data['installedApp'])
         self._events = [Event(item) for item in event_data['events']]
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         resp = EmptyDataResponse('eventData')
-        app.on_event.fire(self, resp, app=app)
         return resp
 
     @property

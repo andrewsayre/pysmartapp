@@ -1,6 +1,6 @@
 """"Tests for the ping module."""
 
-from pysmartapp.consts import LIFECYCLE_PING
+from pysmartapp.const import LIFECYCLE_PING
 from pysmartapp.ping import PingRequest
 
 from .utilities import get_fixture

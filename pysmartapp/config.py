@@ -2,7 +2,7 @@
 
 from typing import List
 
-from .consts import LIFECYCLE_CONFIG_INIT, LIFECYCLE_CONFIG_PAGE
+from .const import LIFECYCLE_CONFIG_INIT, LIFECYCLE_CONFIG_PAGE
 from .request import Request, Response
 
 
@@ -18,14 +18,13 @@ class ConfigRequest(Request):
         self._page_id = config['pageId']
         self._previous_page_id = config['previousPageId']
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         if self._phase == LIFECYCLE_CONFIG_INIT:
             resp = self._process_init(app)
         elif self._phase == LIFECYCLE_CONFIG_PAGE:
             resp = self._process_page()
         else:
             raise ValueError("Invalid request configuration phase.")
-        app.on_config.fire(self, resp, app=app)
         return resp
 
     @staticmethod

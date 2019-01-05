@@ -2,11 +2,12 @@
 
 import pytest
 
+from pysmartapp.dispatch import Dispatcher
 from pysmartapp.errors import (
     SignatureVerificationError, SmartAppNotRegisteredError)
 from pysmartapp.smartapp import SmartApp, SmartAppManager
 
-from .utilities import get_fixture
+from .utilities import get_dispatch_handler, get_fixture
 
 INSTALLED_APP_ID = '8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121'
 APP_ID = 'f6c071aa-6ae7-463f-b0ad-8620ac23140f'
@@ -19,599 +20,377 @@ class TestSmartApp:
     def test_initialize():
         """Tests the property initialization."""
         # Arrange
-        name = "Test Name"
-        description = "Test Description"
-        perms = ["Perm1"]
-        config_app_id = "MyApp"
+        path = '/my/test/path'
+        public_key = 'test'
+        dispatcher = Dispatcher()
         # Act
-        app = SmartApp(name, description, perms, config_app_id)
+        app = SmartApp(path=path, public_key=public_key,
+                       dispatcher=dispatcher)
         # Assert
-        assert app.name == name
-        assert app.description == description
-        assert app.permissions == perms
-        assert app.config_app_id == config_app_id
+        assert app.path == path
+        assert app.public_key == public_key
+        assert app.dispatcher == dispatcher
+        assert app.permissions == []
+        assert app.config_app_id == 'app'
 
     @staticmethod
     def test_setters():
         """Tests the property setters."""
         # Arrange
-        app = SmartApp(None, None, [])
+        app = SmartApp()
         # Act
         app.app_id = "Test"
-        app.path = '/test'
-        app.public_key = 'key'
+        app.config_app_id = "Test Config Id"
+        app.description = "Description"
+        app.name = "Name"
         # Assert
         assert app.app_id == "Test"
-        assert app.path == '/test'
-        assert app.public_key == 'key'
+        assert app.config_app_id == "Test Config Id"
+        assert app.description == "Description"
+        assert app.name == "Name"
 
     @staticmethod
-    def test_ping():
+    @pytest.mark.asyncio
+    async def test_ping(smartapp):
         """Tests the ping lifecycle event."""
         # Arrange
         request = get_fixture("ping_request")
         expected_response = get_fixture("ping_response")
-        app = SmartApp("Test Name", "Test Description", [])
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_ping(handler)
         # Act
-        response = app.handle_request(request)
+        response = await smartapp.handle_request(request)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_ping():
-        """Tests the ping event handler."""
-        # Arrange
-        request = get_fixture("ping_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        smartapp.on_ping += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_config_init():
+    @pytest.mark.asyncio
+    async def test_config_init(smartapp):
         """Tests the configuration initialization lifecycle event."""
         # Arrange
         request = get_fixture("config_init_request")
         expected_response = get_fixture("config_init_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_config(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_config_page():
+    @pytest.mark.asyncio
+    async def test_config_page(smartapp):
         """Tests the configuration initialization page event."""
         # Arrange
         request = get_fixture("config_page_request")
         expected_response = get_fixture("config_page_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_config(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_config():
-        """Tests the config event handler."""
-        # Arrange
-        request = get_fixture("config_init_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        smartapp.on_config += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_install():
+    @pytest.mark.asyncio
+    async def test_install(smartapp):
         """Tests the install lifecycle event."""
         # Arrange
         request = get_fixture("install_request")
         expected_response = get_fixture("install_response")
-        smartapp = SmartApp("SmartApp", "SmartApp Description",
-                            ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_install(handler)
         # Act
-        response = smartapp.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_install():
-        """Tests the install event handler."""
-        # Arrange
-        request = get_fixture("install_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert req.auth_token == '580aff1f-f0f1-44e0-94d4-e68bf9c2e768'
-            assert req.refresh_token == 'ad58374e-9d6a-4457-8488-a05aa8337ab3'
-            assert app == smartapp
-        smartapp.on_install += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_update():
+    @pytest.mark.asyncio
+    async def test_update(smartapp):
         """Tests the update lifecycle event."""
         # Arrange
         request = get_fixture("update_request")
         expected_response = get_fixture("update_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_update(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_update():
-        """Tests the update event handler."""
-        # Arrange
-        request = get_fixture("update_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert req.auth_token == '4ebd8d9f-53b0-483f-a989-4bde30ca83c0'
-            assert req.refresh_token == '6e3bbf5f-b68d-4250-bbc9-f7151016a77f'
-            assert app == smartapp
-        smartapp.on_update += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_event():
+    @pytest.mark.asyncio
+    async def test_event(smartapp):
         """Tests the event lifecycle event."""
         # Arrange
         request = get_fixture("event_request")
         expected_response = get_fixture("event_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_event(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_event():
-        """Tests the event event handler."""
-        # Arrange
-        request = get_fixture("event_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        smartapp.on_event += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_oauth_callback():
+    @pytest.mark.asyncio
+    async def test_oauth_callback(smartapp):
         """Tests the oauth_callback lifecycle event."""
         # Arrange
         request = get_fixture("oauth_callback_request")
         expected_response = get_fixture("oauth_callback_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_oauth_callback(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_oauth_callback():
-        """Tests the oauth_callback event handler."""
-        # Arrange
-        request = get_fixture("oauth_callback_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        smartapp.on_oauth_callback += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_uninstall():
+    @pytest.mark.asyncio
+    async def test_uninstall(smartapp):
         """Tests the uninstall lifecycle event."""
         # Arrange
         request = get_fixture("uninstall_request")
         expected_response = get_fixture("uninstall_response")
-        app = SmartApp("SmartApp", "SmartApp Description",
-                       ['l:devices'], "myapp")
+        handler = get_dispatch_handler(smartapp)
+        smartapp.connect_uninstall(handler)
         # Act
-        response = app.handle_request(request, None, False)
+        response = await smartapp.handle_request(request, None, False)
         # Assert
+        assert handler.fired
         assert response == expected_response
 
     @staticmethod
-    def test_on_uninstall():
-        """Tests the uninstall event handler."""
-        # Arrange
-        request = get_fixture("uninstall_request")
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        smartapp.on_uninstall += handler
-        # Act
-        smartapp.handle_request(request, None, False)
-        # Assert
-        assert fired
-
-    @staticmethod
-    def test_handle_request_sig_verification():
+    @pytest.mark.asyncio
+    async def test_handle_request_sig_verification():
         """Tests handle_request with sig verification."""
         # Arrange
         public_key = get_fixture('public_key', 'pem')
         data = get_fixture('config_init_sig_pass_request')
-        smartapp = SmartApp("Test Name", "Test Description", [],
-                            public_key=public_key)
+        smartapp = SmartApp(public_key=public_key)
         # Act
-        resp = smartapp.handle_request(data['body'], data['headers'], True)
+        resp = await smartapp.handle_request(
+            data['body'], data['headers'], True)
         # Assert
         assert resp
 
     @staticmethod
-    def test_handle_request_sig_verification_missing_headers():
+    @pytest.mark.asyncio
+    async def test_handle_request_sig_verification_missing_headers():
         """Tests handle_request with sig verification."""
         # Arrange
         public_key = get_fixture('public_key', 'pem')
         data = get_fixture('config_init_sig_pass_request')
-        smartapp = SmartApp("Test Name", "Test Description", [],
-                            public_key=public_key)
+        smartapp = SmartApp(public_key=public_key)
         # Act/Assert
         with pytest.raises(SignatureVerificationError):
-            smartapp.handle_request(data['body'], [], True)
+            await smartapp.handle_request(data['body'], [], True)
 
     @staticmethod
-    def test_handle_request_sig_verification_fails():
+    @pytest.mark.asyncio
+    async def test_handle_request_sig_verification_fails():
         """Tests handle_request with sig verification."""
         # Arrange
         public_key = get_fixture('public_key', 'pem')
         data = get_fixture('config_init_sig_fail_request')
-        smartapp = SmartApp("Test Name", "Test Description", [],
-                            public_key=public_key)
+        smartapp = SmartApp(public_key=public_key)
         # Act/Assert
         with pytest.raises(SignatureVerificationError):
-            smartapp.handle_request(data['body'], data['headers'], True)
+            await smartapp.handle_request(data['body'], data['headers'], True)
 
 
 class TestSmartAppManager:
     """Tests for the SmartAppManager class."""
 
     @staticmethod
-    def test_handle_request_ping_not_registered():
+    @pytest.mark.asyncio
+    async def test_handle_request_ping_not_registered(manager):
         """Tests the ping lifecycle event with no registered apps."""
         # Arrange
         request = get_fixture("ping_request")
         expected_response = get_fixture("ping_response")
-        fired = False
-        manager = SmartAppManager()
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == manager
-        manager.on_ping += handler
-
+        handler = get_dispatch_handler(manager)
+        manager.connect_ping(handler)
         # Act
-        response = manager.handle_request(request)
+        response = await manager.handle_request(request)
         # Assert
+        assert handler.fired
         assert response == expected_response
-        assert fired
 
     @staticmethod
-    def test_handle_request_not_registered():
+    @pytest.mark.asyncio
+    async def test_handle_request_not_registered(manager: SmartAppManager):
         """Tests processing a request when no SmartApp has been registered."""
         # Arrange
         request = get_fixture("config_init_request")
-        manager = SmartAppManager()
         # Act
         with pytest.raises(SmartAppNotRegisteredError) as e_info:
-            manager.handle_request(request, None, False)
+            await manager.handle_request(request, None, False)
         # Assert
         assert e_info.value.installed_app_id == INSTALLED_APP_ID
 
     @staticmethod
-    def test_handle_request_fallback():
+    @pytest.mark.asyncio
+    async def test_handle_request_not_app_id(manager: SmartAppManager):
         """Tests processing a request when no SmartApp has been registered."""
         # Arrange
-        request = get_fixture("config_init_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_config += handler
+        request = get_fixture("config_init_sig_fail_request")['body']
         # Act
-        manager.handle_request(request, None, False)
+        with pytest.raises(SmartAppNotRegisteredError) as e_info:
+            await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert e_info.value.installed_app_id == INSTALLED_APP_ID
 
     @staticmethod
-    def test_register():
+    def test_register(manager: SmartAppManager):
         """Test register"""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
+        public_key = '123'
         # Act
-        manager.register(smartapp)
+        app = manager.register(APP_ID, public_key)
         # Assert
-        assert manager.smartapps[APP_ID] == smartapp
+        assert app.app_id == APP_ID
+        assert app.public_key == public_key
+        assert app.path == manager.path
+        assert APP_ID in manager.smartapps
 
     @staticmethod
-    def test_register_no_app_id():
+    def test_register_no_app_id(manager: SmartAppManager):
         """Test register with no SmartApp app id"""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
         # Act
         with pytest.raises(ValueError) as e_info:
-            manager.register(smartapp)
+            manager.register(None, '')
         # Assert
         assert str(e_info.value) == 'smartapp must have an app_id.'
 
     @staticmethod
-    def test_register_twice():
+    def test_register_twice(manager: SmartAppManager):
         """Test register with the same app twice"""
         # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
+        public_key = '123'
+        manager.register(APP_ID, public_key)
         # Act
         with pytest.raises(ValueError) as e_info:
-            manager.register(smartapp)
+            manager.register(APP_ID, public_key)
         # Assert
         assert str(e_info.value) == 'smartapp already registered.'
 
     @staticmethod
-    def test_unregister():
+    def test_unregister(manager: SmartAppManager):
         """Test unregister"""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
+        # Arrange'
+        manager.register(APP_ID, '123')
         # Act
-        manager.unregister(smartapp)
+        manager.unregister(APP_ID)
         # Assert
         assert APP_ID not in manager.smartapps
 
     @staticmethod
-    def test_unregister_no_app_id():
+    def test_unregister_no_app_id(manager: SmartAppManager):
         """Test unregister with no SmartApp app id"""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
         # Act
         with pytest.raises(ValueError) as e_info:
-            manager.unregister(smartapp)
+            manager.unregister(None)
         # Assert
         assert str(e_info.value) == 'smartapp must have an app_id.'
 
     @staticmethod
-    def test_unregister_not_registered():
+    def test_unregister_not_registered(manager: SmartAppManager):
         """Test register with the same app twice"""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
         # Act
         with pytest.raises(ValueError) as e_info:
-            manager.unregister(smartapp)
+            manager.unregister(APP_ID)
         # Assert
         assert str(e_info.value) == 'smartapp was not previously registered.'
 
     @staticmethod
-    def test_map_installed_apps():
-        """Tests the map_installed_apps method."""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        # Act
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        # Assert
-        assert manager.installed_apps[INSTALLED_APP_ID] == smartapp
-
-    @staticmethod
-    def test_unmap_installed_apps():
-        """Tests the map_installed_apps method."""
-        # Arrange
-        manager = SmartAppManager()
-        smartapp = SmartApp(None, None, [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        # Act
-        manager.unmap_installed_apps(INSTALLED_APP_ID)
-        # Assert
-        assert INSTALLED_APP_ID not in manager.installed_apps
-
-    @staticmethod
-    def test_on_config():
+    @pytest.mark.asyncio
+    async def test_on_config(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("config_init_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_config += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_config(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired
 
     @staticmethod
-    def test_on_install():
+    @pytest.mark.asyncio
+    async def test_on_install(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("install_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_install += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_install(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired
 
     @staticmethod
-    def test_on_update():
+    @pytest.mark.asyncio
+    async def test_on_update(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("update_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_update += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_update(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired
 
     @staticmethod
-    def test_on_event():
+    @pytest.mark.asyncio
+    async def test_on_event(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("event_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_event += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_event(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired
 
     @staticmethod
-    def test_on_oauth_callback():
+    @pytest.mark.asyncio
+    async def test_on_oauth_callback(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("oauth_callback_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_oauth_callback += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_oauth_callback(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired
 
     @staticmethod
-    def test_on_uninstall():
+    @pytest.mark.asyncio
+    async def test_on_uninstall(manager: SmartAppManager):
         """Tests the config event handler at the manager level."""
         # Arrange
         request = get_fixture("uninstall_request")
-        manager = SmartAppManager()
-        smartapp = SmartApp("Test Name", "Test Description", [])
-        smartapp.app_id = APP_ID
-        manager.register(smartapp)
-        manager.map_installed_apps(
-            smartapp.app_id, INSTALLED_APP_ID)
-        fired = False
-
-        def handler(req, resp, app):
-            nonlocal fired
-            fired = True
-            assert app == smartapp
-        manager.on_uninstall += handler
+        handler = get_dispatch_handler(manager)
+        manager.connect_uninstall(handler)
+        manager.register(APP_ID, 'none')
         # Act
-        manager.handle_request(request, None, False)
+        await manager.handle_request(request, None, False)
         # Assert
-        assert fired
+        assert handler.fired

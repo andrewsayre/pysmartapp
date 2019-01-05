@@ -6,5 +6,8 @@
   "oAuthCallbackData": {
     "installedAppId": "8a0dcdc9-1ab4-4c60-9de7-cb78f59a1121",
     "urlPath": "string"
+  },
+  "settings": {
+    "appId": "f6c071aa-6ae7-463f-b0ad-8620ac23140f"
   }
 }

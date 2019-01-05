@@ -48,16 +48,17 @@ class Request:
         self._location_id = None
         self._installed_app_config = {}
         self._settings = data.get('settings', {})
+        self._supports_validation = True
 
     def _init_installed_app(self, installed_app):
         self._installed_app_id = installed_app['installedAppId']
         self._location_id = installed_app['locationId']
         self._installed_app_config = installed_app['config']
 
-    def process(self, app, headers: list = None,
-                validate_signature: bool = True) -> Response:
+    async def process(self, app, headers: list = None,
+                      validate_signature: bool = True) -> Response:
         """Process the request with the SmartApp."""
-        if validate_signature:
+        if validate_signature and self._supports_validation:
             try:
                 verifier = HeaderVerifier(
                     headers=headers, secret=app.public_key, method='POST',
@@ -67,9 +68,11 @@ class Request:
                 raise SignatureVerificationError from ex
             if not result:
                 raise SignatureVerificationError
-        return self._process(app)
+        response = await self._process(app)
+        app.dispatcher.send(self.lifecycle, self, response, app)
+        return response
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         raise NotImplementedError
 
     @property

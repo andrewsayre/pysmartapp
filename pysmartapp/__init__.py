@@ -2,7 +2,8 @@
 
 from pysmartapp.config import (
     ConfigInitResponse, ConfigPageResponse, ConfigRequest)
-from pysmartapp.consts import __title__, __version__  # noqa
+from pysmartapp.const import __title__, __version__  # noqa
+from pysmartapp.dispatch import Dispatcher
 from pysmartapp.errors import (
     SignatureVerificationError, SmartAppNotRegisteredError)
 from pysmartapp.event import Event, EventRequest
@@ -19,6 +20,8 @@ __all__ = [
     'ConfigInitResponse',
     'ConfigPageResponse',
     'ConfigRequest',
+    # dispatch
+    'Dispatcher',
     # errors
     'SignatureVerificationError',
     'SmartAppNotRegisteredError',

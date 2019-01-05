@@ -14,9 +14,8 @@ class OAuthCallbackRequest(Request):
         self._installed_app_id = callback_data['installedAppId']
         self._url_path = callback_data['urlPath']
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         resp = EmptyDataResponse('oAuthCallbackData')
-        app.on_oauth_callback.fire(self, resp, app=app)
         return resp
 
     @property

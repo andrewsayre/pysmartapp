@@ -14,9 +14,8 @@ class InstallRequest(Request):
         self._auth_token = install_data['authToken']
         self._refresh_token = install_data['refreshToken']
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         resp = EmptyDataResponse('installData')
-        app.on_install.fire(self, resp, app=app)
         return resp
 
     @property

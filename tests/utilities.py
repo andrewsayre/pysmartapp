@@ -10,3 +10,12 @@ def get_fixture(file: str, ext: str = 'json'):
         if ext == 'json':
             return json.load(open_file)
         return open_file.read()
+
+
+def get_dispatch_handler(smartapp):
+    """Get a handler to mock in the dispatcher."""
+    def handler(req, resp, app):
+        handler.fired = True
+        assert app == smartapp
+    handler.fired = False
+    return handler

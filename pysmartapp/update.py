@@ -14,9 +14,8 @@ class UpdateRequest(Request):
         self._auth_token = update_data['authToken']
         self._refresh_token = update_data['refreshToken']
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         resp = EmptyDataResponse('updateData')
-        app.on_update.fire(self, resp, app=app)
         return resp
 
     @property

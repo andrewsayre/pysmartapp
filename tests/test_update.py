@@ -1,6 +1,6 @@
 """"Tests for the update module."""
 
-from pysmartapp.consts import LIFECYCLE_UPDATE
+from pysmartapp.const import LIFECYCLE_UPDATE
 from pysmartapp.update import UpdateRequest
 
 from .utilities import get_fixture

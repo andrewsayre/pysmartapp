@@ -12,9 +12,8 @@ class UninstallRequest(Request):
         uninstall_data = self._uninstall_data_raw = data['uninstallData']
         self._init_installed_app(uninstall_data['installedApp'])
 
-    def _process(self, app) -> Response:
+    async def _process(self, app) -> Response:
         resp = EmptyDataResponse('uninstallData')
-        app.on_uninstall.fire(self, resp, app=app)
         return resp
 
     @property

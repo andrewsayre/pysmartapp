@@ -38,7 +38,6 @@
     ]
   },
   "settings": {
-    "property1": "string",
-    "property2": "string"
+    "appId": "f6c071aa-6ae7-463f-b0ad-8620ac23140f"
   }
 }

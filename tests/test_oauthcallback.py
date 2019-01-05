@@ -1,6 +1,6 @@
 """"Tests for the oauthcallback module."""
 
-from pysmartapp.consts import LIFECYCLE_OAUTH_CALLBACK
+from pysmartapp.const import LIFECYCLE_OAUTH_CALLBACK
 from pysmartapp.oauthcallback import OAuthCallbackRequest
 
 from .utilities import get_fixture

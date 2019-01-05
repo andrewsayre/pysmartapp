@@ -46,11 +46,12 @@ class TestRequest:
     """Tests for the Request class."""
 
     @staticmethod
-    def test_process_raises():
+    @pytest.mark.asyncio
+    async def test_process_raises():
         """Tests the to_data method."""
         # Arrange
         data = get_fixture('ping_request')
         resp = Request(data)
         # Act/Assert
         with pytest.raises(NotImplementedError):
-            resp.process(None, validate_signature=False)
+            await resp.process(None, validate_signature=False)
