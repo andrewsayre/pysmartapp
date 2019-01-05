@@ -63,8 +63,8 @@ class Request:
                     headers=headers, secret=app.public_key, method='POST',
                     path=app.path)
                 result = verifier.verify()
-            except Exception:
-                raise SignatureVerificationError
+            except Exception as ex:
+                raise SignatureVerificationError from ex
             if not result:
                 raise SignatureVerificationError
         return self._process(app)

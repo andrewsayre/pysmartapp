@@ -105,8 +105,8 @@ class SmartAppManager:
 
     def __init__(self):
         """Create a new instance of the manager."""
-        self._smartapps: Dict[str, SmartApp] = {}
-        self._installed_apps: Dict[str, SmartApp] = {}
+        self._smartapps = {}
+        self._installed_apps = {}
         self.on_ping = EventHook()
         self.on_config = EventHook()
         self.on_install = EventHook()

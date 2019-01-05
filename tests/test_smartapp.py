@@ -2,8 +2,8 @@
 
 import pytest
 
-from pysmartapp.errors import (SignatureVerificationError,
-                               SmartAppNotRegisteredError)
+from pysmartapp.errors import (
+    SignatureVerificationError, SmartAppNotRegisteredError)
 from pysmartapp.smartapp import SmartApp, SmartAppManager
 
 from .utilities import get_fixture
