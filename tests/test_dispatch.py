@@ -1,6 +1,7 @@
 """Define tests for the Dispatch module."""
 
 import asyncio
+import functools
 
 import pytest
 
@@ -53,6 +54,19 @@ class TestDispatcher:
         # Arrange
         dispatcher = Dispatcher()
         dispatcher.connect('TEST', async_handler)
+        # Act
+        await asyncio.gather(*dispatcher.send('TEST'))
+        # Assert
+        assert async_handler.fired
+
+    @staticmethod
+    @pytest.mark.asyncio
+    async def test_send_async_partial_handler(async_handler):
+        """Tests sending to async handlers."""
+        # Arrange
+        partial = functools.partial(async_handler)
+        dispatcher = Dispatcher()
+        dispatcher.connect('TEST', partial)
         # Act
         await asyncio.gather(*dispatcher.send('TEST'))
         # Assert

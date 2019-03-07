@@ -1,6 +1,6 @@
 """Define the event module."""
 
-from typing import Sequence
+from typing import Any, Dict, Optional, Sequence
 
 from .const import EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER
 from .request import EmptyDataResponse, Request, Response
@@ -20,6 +20,8 @@ class Event:
         self._capability = None
         self._attribute = None
         self._value = None
+        self._value_type = None
+        self._data = None
         self._state_change = None
         if self._event_type == EVENT_TYPE_DEVICE:
             device_event = data['deviceEvent']
@@ -31,6 +33,8 @@ class Event:
             self._capability = device_event['capability']
             self._attribute = device_event['attribute']
             self._value = device_event['value']
+            self._value_type = device_event['valueType']
+            self._data = device_event.get('data')
             self._state_change = device_event['stateChange']
         self._timer_name = None
         self._timer_type = None
@@ -85,9 +89,19 @@ class Event:
         return self._attribute
 
     @property
-    def value(self):
+    def value(self) -> Optional[Any]:
         """Get the value."""
         return self._value
+
+    @property
+    def value_type(self) -> str:
+        """Get the type of the value."""
+        return self._value_type
+
+    @property
+    def data(self) -> Optional[Dict[str, Any]]:
+        """Get the data associated with the event."""
+        return self._data
 
     @property
     def state_change(self) -> bool:
@@ -136,7 +150,7 @@ class EventRequest(Request):
         return self._event_data_raw
 
     @property
-    def auth_token(self):
+    def auth_token(self) -> str:
         """Get the auth token."""
         return self._auth_token
 

@@ -28,7 +28,7 @@ class TestEventRequest:
         assert req.installed_app_config == {}
         assert req.settings == data['settings']
         assert req.auth_token == 'f01894ce-013a-434a-b51e-f82126fd72e4'
-        assert len(req.events) == 2
+        assert len(req.events) == 3
 
 
 class TestEvent:
@@ -51,13 +51,26 @@ class TestEvent:
         assert evt.capability == 'motionSensor'
         assert evt.attribute == 'motion'
         assert evt.value == 'active'
+        assert evt.value_type == 'string'
+        assert evt.data is None
         assert evt.state_change
+
+    @staticmethod
+    def test_init_device_event_with_data():
+        """Tests the init method."""
+        # Arrange
+        data = get_fixture('event_request')['eventData']['events'][1]
+        # Act
+        evt = Event(data)
+        # Assert
+        assert evt.event_type == EVENT_TYPE_DEVICE
+        assert evt.data == {"codeId": "1", "method": "manual"}
 
     @staticmethod
     def test_init_timer_event():
         """Tests the init method."""
         # Arrange
-        data = get_fixture('event_request')['eventData']['events'][1]
+        data = get_fixture('event_request')['eventData']['events'][2]
         # Act
         evt = Event(data)
         # Assert

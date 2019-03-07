@@ -22,7 +22,27 @@
           "capability": "motionSensor",
           "attribute": "motion",
           "value" :"active",
+          "valueType": "string",
           "stateChange": true
+        }
+      },
+      {
+        "eventType": "DEVICE_EVENT",
+        "deviceEvent": {
+          "eventId": "0dd0b7f2-407e-11e9-82d8-df54c125e40f",
+          "locationId": "5c03e518-118a-44cb-85ad-7877d0b302e4",
+          "deviceId": "45cae340-bc11-41f9-b46c-abfaf82189fe",
+          "componentId": "main",
+          "capability": "lock",
+          "attribute": "lock",
+          "value": "locked",
+          "valueType": "string",
+          "stateChange": true,
+          "data": {
+              "codeId": "1",
+              "method": "manual"
+          },
+          "subscriptionName": "013f8f57-b02f-495e-899e-ad7e9a689cc1"
         }
       },
       {

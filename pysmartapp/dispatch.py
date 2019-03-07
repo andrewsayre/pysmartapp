@@ -2,6 +2,7 @@
 
 import asyncio
 from collections import defaultdict
+import functools
 from typing import Any, Callable, Dict, List, Sequence
 
 TargetType = Callable[..., Any]
@@ -59,7 +60,10 @@ class Dispatcher:
         return futures
 
     def _call_target(self, target, *args) -> asyncio.Future:
-        if asyncio.iscoroutinefunction(target):
+        check_target = target
+        while isinstance(check_target, functools.partial):
+            check_target = check_target.func
+        if asyncio.iscoroutinefunction(check_target):
             return self._loop.create_task(target(*args))
         return self._loop.run_in_executor(None, target, *args)
 
