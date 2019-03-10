@@ -36,6 +36,23 @@ class TestDispatcher:
 
     @staticmethod
     @pytest.mark.asyncio
+    async def test_disconnect_all(handler):
+        """Tests the disconnect all function."""
+        # Arrange
+        dispatcher = Dispatcher()
+        dispatcher.connect('TEST', handler)
+        dispatcher.connect('TEST', handler)
+        dispatcher.connect('TEST2', handler)
+        dispatcher.connect('TEST3', handler)
+        # Act
+        dispatcher.disconnect_all()
+        # Assert
+        assert handler not in dispatcher.signals['TEST']
+        assert handler not in dispatcher.signals['TEST2']
+        assert handler not in dispatcher.signals['TEST3']
+
+    @staticmethod
+    @pytest.mark.asyncio
     async def test_already_disconnected(handler):
         """Tests that disconnect can be called more than once."""
         # Arrange

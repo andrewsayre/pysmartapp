@@ -23,17 +23,27 @@ class Dispatcher:
         self._connect = connect or self._default_connect
         self._send = send or self._default_send
         self._last_sent = []
+        self._disconnects = []
 
     def connect(self, signal: str, target: TargetType) \
             -> DisconnectType:
         """Connect function to signal.  Must be ran in the event loop."""
-        return self._connect(self._signal_prefix + signal, target)
+        disconnect = self._connect(self._signal_prefix + signal, target)
+        self._disconnects.append(disconnect)
+        return disconnect
 
     def send(self, signal: str, *args: Any) -> Sequence[asyncio.Future]:
         """Fire a signal.  Must be ran in the event loop."""
         sent = self._last_sent = self._send(
             self._signal_prefix + signal, *args)
         return sent
+
+    def disconnect_all(self):
+        """Disconnect all connected."""
+        disconnects = self._disconnects.copy()
+        self._disconnects.clear()
+        for disconnect in disconnects:
+            disconnect()
 
     def _default_connect(self, signal: str, target: TargetType) \
             -> DisconnectType:
