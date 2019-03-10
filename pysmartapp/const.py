@@ -1,7 +1,7 @@
 """Define constants used in the SmartApp."""
 
 __title__ = "pysmartapp"
-__version__ = "0.3.1"
+__version__ = "0.3.2"
 
 LIFECYCLE_PING = 'PING'
 LIFECYCLE_CONFIG = 'CONFIGURATION'
