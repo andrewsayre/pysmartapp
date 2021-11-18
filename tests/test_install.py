@@ -1,4 +1,4 @@
-""""Tests for the install module."""
+"""Tests for the install module."""
 
 from pysmartapp.const import LIFECYCLE_INSTALL
 from pysmartapp.install import InstallRequest

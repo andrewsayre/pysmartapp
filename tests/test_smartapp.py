@@ -272,7 +272,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_register(manager: SmartAppManager):
-        """Test register"""
+        """Test register."""
         public_key = '123'
         # Act
         app = manager.register(APP_ID, public_key)
@@ -284,7 +284,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_register_no_app_id(manager: SmartAppManager):
-        """Test register with no SmartApp app id"""
+        """Test register with no SmartApp app id."""
         # Act
         with pytest.raises(ValueError) as e_info:
             manager.register(None, '')
@@ -293,7 +293,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_register_twice(manager: SmartAppManager):
-        """Test register with the same app twice"""
+        """Test register with the same app twice."""
         # Arrange
         public_key = '123'
         manager.register(APP_ID, public_key)
@@ -305,7 +305,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_unregister(manager: SmartAppManager):
-        """Test unregister"""
+        """Test unregister."""
         # Arrange'
         manager.register(APP_ID, '123')
         # Act
@@ -315,7 +315,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_unregister_no_app_id(manager: SmartAppManager):
-        """Test unregister with no SmartApp app id"""
+        """Test unregister with no SmartApp app id."""
         # Act
         with pytest.raises(ValueError) as e_info:
             manager.unregister(None)
@@ -324,7 +324,7 @@ class TestSmartAppManager:
 
     @staticmethod
     def test_unregister_not_registered(manager: SmartAppManager):
-        """Test register with the same app twice"""
+        """Test register with the same app twice."""
         # Act
         with pytest.raises(ValueError) as e_info:
             manager.unregister(APP_ID)

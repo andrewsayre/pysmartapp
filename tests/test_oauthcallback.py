@@ -1,4 +1,4 @@
-""""Tests for the oauthcallback module."""
+"""Tests for the oauthcallback module."""
 
 from pysmartapp.const import LIFECYCLE_OAUTH_CALLBACK
 from pysmartapp.oauthcallback import OAuthCallbackRequest

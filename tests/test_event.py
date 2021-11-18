@@ -1,4 +1,4 @@
-""""Tests for the event module."""
+"""Tests for the event module."""
 
 from pysmartapp.const import (
     EVENT_TYPE_DEVICE, EVENT_TYPE_TIMER, LIFECYCLE_EVENT)

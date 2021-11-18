@@ -1,4 +1,4 @@
-""""Tests for the update module."""
+"""Tests for the update module."""
 
 from pysmartapp.const import LIFECYCLE_UPDATE
 from pysmartapp.update import UpdateRequest

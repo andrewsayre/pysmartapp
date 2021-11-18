@@ -1,4 +1,4 @@
-""""Tests for the config module."""
+"""Tests for the config module."""
 
 import pytest
 
@@ -33,7 +33,7 @@ class TestConfigRequest:
     @staticmethod
     @pytest.mark.asyncio
     async def test_process_invalid():
-        """Tests the process method for an invalid phase"""
+        """Tests the process method for an invalid phase."""
         # Arrange
         data = get_fixture('config_init_request')
         data['configurationData']['phase'] = "UNKNOWN"

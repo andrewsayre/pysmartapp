@@ -1,4 +1,4 @@
-""""Tests for the ping module."""
+"""Tests for the ping module."""
 
 from pysmartapp.const import LIFECYCLE_PING
 from pysmartapp.ping import PingRequest

@@ -1,4 +1,4 @@
-""""Tests for the uninstall module."""
+"""Tests for the uninstall module."""
 
 from pysmartapp.const import LIFECYCLE_UNINSTALL
 from pysmartapp.uninstall import UninstallRequest
