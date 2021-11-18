@@ -1,5 +1,5 @@
 # pysmartapp
-[![CI Status](https://github.com/andrewsayre/pysmartapp/workflows/CI/badge.svg)](https://github.com/andrewsayre/pysmartthings/actions)
+[![CI Status](https://github.com/andrewsayre/pysmartapp/workflows/CI/badge.svg)](https://github.com/andrewsayre/pysmartapp/actions)
 [![codecov](https://codecov.io/gh/andrewsayre/pysmartapp/branch/master/graph/badge.svg?token=VKPQ25JRAY)](https://codecov.io/gh/andrewsayre/pysmartapp)
 [![image](https://img.shields.io/pypi/v/pysmartapp.svg)](https://pypi.org/project/pysmartapp/)
 [![image](https://img.shields.io/pypi/pyversions/pysmartapp.svg)](https://pypi.org/project/pysmartapp/)
