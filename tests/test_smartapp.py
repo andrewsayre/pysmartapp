@@ -32,7 +32,7 @@ class TestSmartApp:
         assert app.path == path
         assert app.public_key == public_key
         assert app.dispatcher == dispatcher
-        assert app.permissions == []
+        assert not app.permissions
         assert app.config_app_id == 'app'
 
     @staticmethod
