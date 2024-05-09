@@ -1,3 +1,5 @@
+`DEPRECATED:` This project is no longer maintained. If you are interested in taking over ownership, please contact me: andrew at sayre dot net.
+
 # pysmartapp
 [![CI Status](https://github.com/andrewsayre/pysmartapp/workflows/CI/badge.svg)](https://github.com/andrewsayre/pysmartapp/actions)
 [![codecov](https://codecov.io/gh/andrewsayre/pysmartapp/branch/master/graph/badge.svg?token=VKPQ25JRAY)](https://codecov.io/gh/andrewsayre/pysmartapp)
